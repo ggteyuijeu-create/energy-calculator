@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>Energy Calculator</title>
+
+<style>
+:root {
+  --bg: #f1f5f9;
+  --card: rgba(255,255,255,.85);
+  --text: #0f172a;
+  --muted: #64748b;
+  --primary: #06b6d4;
+  --primary2: #2563eb;
+  --border: #e2e8f0;
+}
+
+body.dark {
+  --bg: #020617;
+  --card: rgba(15,23,42,.88);
+  --text: #f8fafc;
+  --muted: #94a3b8;
+  --border: #1e293b;
+}
+
+* {
+  box-sizing: border-box;
+  font-family: Arial, sans-serif;
+}
+
+body {
+  margin: 0;
+  min-height: 100vh;
+  color: var(--text);
+  background:
+    radial-gradient(circle at top left, #164e63, transparent 35%),
+    radial-gradient(circle at bottom right, #1e3a8a, transparent 35%),
+    var(--bg);
+  transition: .3s;
+  padding: 25px;
+}
+
+.container {
+  max-width: 1000px;
+  margin: auto;
+}
+
+/* HEADER */
+
+.header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 25px;
+}
+
+.logo {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+}
+
+.logo-icon {
+  width: 48px;
+  height: 48px;
+  display: grid;
+  place-items: center;
+  border-radius: 15px;
+  background: linear-gradient(135deg,var(--primary),var(--primary2));
+  font-size: 25px;
+  box-shadow: 0 8px 25px rgba(6,182,212,.3);
+}
+
+h1 {
+  margin: 0;
+  font-size: 25px;
+}
+
+.header p {
+  margin: 4px 0;
+  color: var(--muted);
+}
+
+.theme-btn {
+  border: 1px solid var(--border);
+  background: var(--card);
+  color: var(--text);
+  width: 45px;
+  height: 45px;
+  border-radius: 50%;
+  cursor: pointer;
+  font-size: 20px;
+}
+
+/* GRID */
+
+.grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 20px;
+}
+
+.card {
+  background: var(--card);
+  backdrop-filter: blur(15px);
+  border: 1px solid var(--border);
+  border-radius: 22px;
+  padding: 25px;
+  box-shadow: 0 15px 40px rgba(0,0,0,.12);
+}
+
+.card h2 {
+  margin-top: 0;
+}
+
+/* FORM */
+
+label {
+  display: block;
+  margin: 16px 0 7px;
+  font-weight: bold;
+}
+
+input {
+  width: 100%;
+  padding: 14px;
+  border-radius: 12px;
+  border: 1px solid var(--border);
+  background: var(--bg);
+  color: var(--text);
+  outline: none;
+  font-size: 15px;
+}
+
+input:focus {
+  border-color: var(--primary);
+  box-shadow: 0 0 0 3px rgba(6,182,212,.12);
+}
+
+button {
+  border: 0;
+  cursor: pointer;
+}
+
+.calculate {
+  width: 100%;
+  margin-top: 22px;
+  padding: 15px;
+  border-radius: 12px;
+  color: white;
+  font-weight: bold;
+  font-size: 16px;
+  background: linear-gradient(135deg,var(--primary),var(--primary2));
+  transition: .2s;
+}
+
+.calculate:hover {
+  transform: translateY(-2px);
+  box-shadow: 0 10px 25px rgba(6,182,212,.25);
+}
+
+/* RESULT */
+
+.result {
+  margin-top: 20px;
+  padding: 20px;
+  border-radius: 16px;
+  background: linear-gradient(135deg,rgba(6,182,212,.12),rgba(37,99,235,.12));
+  border: 1px solid var(--border);
+}
+
+.energy {
+  font-size: 35px;
+  font-weight: bold;
+  margin: 10px 0;
+  color: var(--primary);
+}
+
+.suggestion {
+  padding: 13px;
+  margin-top: 15px;
+  border-radius: 12px;
+  background: rgba(34,197,94,.1);
+  color: #22c55e;
+}
+
+/* HISTORY */
+
+.history-card {
+  margin-top: 20px;
+}
+
+.history-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.clear {
+  padding: 8px 12px;
+  border-radius: 9px;
+  background: #ef4444;
+  color: white;
+  font-size: 13px;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  gap: 10px;
+  padding: 15px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.history-item:last-child {
+  border-bottom: 0;
+}
+
+.history-name {
+  font-weight: bold;
+}
+
+.history-info {
+  color: var(--muted);
+  font-size: 13px;
+  margin-top: 4px;
+}
+
+.history-energy {
+  color: var(--primary);
+  font-weight: bold;
+}
+
+.empty {
+  text-align: center;
+  color: var(--muted);
+  padding: 25px 0;
+}
+
+/* RESPONSIVE */
+
+@media(max-width:700px) {
+  body {
+    padding: 15px;
+  }
+
+  .grid {
+    grid-template-columns: 1fr;
+  }
+
+  .header {
+    align-items: flex-start;
+  }
+
+  h1 {
+    font-size: 21px;
+  }
+}
+</style>
+</head>
+
+<body>
+
+<div class="container">
+
+  <!-- HEADER -->
+  <div class="header">
+
+    <div class="logo">
+      <div class="logo-icon">⚡</div>
+
+      <div>
+        <h1>Energy Calculator</h1>
+        <p>Hitung penggunaan energi listrikmu</p>
+      </div>
+    </div>
+
+    <button class="theme-btn" onclick="toggleDark()" id="themeBtn">
+      🌙
+    </button>
+
+  </div>
+
+
+  <div class="grid">
+
+    <!-- FORM -->
+    <div class="card">
+
+      <h2>🔌 Data Alat</h2>
+
+      <label>Nama Alat</label>
+      <input
+        type="text"
+        id="nama"
+        placeholder="Contoh: Lampu"
+      >
+
+      <label>Daya Alat (Watt)</label>
+      <input
+        type="number"
+        id="daya"
+        placeholder="Contoh: 20"
+      >
+
+      <label>Lama Pemakaian (jam/hari)</label>
+      <input
+        type="number"
+        id="lama"
+        placeholder="Contoh: 5"
+      >
+
+      <label>Jumlah Pemakaian / Hari</label>
+      <input
+        type="number"
+        id="jumlah"
+        placeholder="Contoh: 1"
+      >
+
+      <button class="calculate" onclick="hitung()">
+        ⚡ Hitung Energi
+      </button>
+
+    </div>
+
+
+    <!-- RESULT -->
+    <div class="card">
+
+      <h2>📊 Hasil</h2>
+
+      <div id="hasil">
+        <div class="empty">
+          Masukkan data alat terlebih dahulu ⚡
+        </div>
+      </div>
+
+    </div>
+
+  </div>
+
+
+  <!-- HISTORY -->
+  <div class="card history-card">
+
+    <div class="history-header">
+
+      <h2>🕘 Riwayat Perhitungan</h2>
+
+      <button class="clear" onclick="hapusRiwayat()">
+        Hapus Semua
+      </button>
+
+    </div>
+
+    <div id="history"></div>
+
+  </div>
+
+</div>
+
+
+<script>
+
+let riwayat =
+  JSON.parse(localStorage.getItem("energyHistory")) || [];
+
+
+// ============================
+// HITUNG ENERGI
+// ============================
+
+function hitung() {
+
+  const nama =
+    document.getElementById("nama").value.trim();
+
+  const daya =
+    Number(document.getElementById("daya").value);
+
+  const lama =
+    Number(document.getElementById("lama").value);
+
+  const jumlah =
+    Number(document.getElementById("jumlah").value);
+
+
+  if (!nama || daya <= 0 || lama <= 0 || jumlah <= 0) {
+
+    alert("Isi semua data dengan benar dulu bre 😅");
+
+    return;
+  }
+
+
+  // Rumus:
+  // Energi = Daya × Lama × Jumlah
+
+  const energi =
+    daya * lama * jumlah;
+
+  const kwh =
+    energi / 1000;
+
+
+  let saran;
+
+
+  if (energi <= 100) {
+
+    saran =
+      "Penggunaan energi tergolong rendah. Tetap matikan alat jika tidak digunakan 👍";
+
+  }
+
+  else if (energi <= 500) {
+
+    saran =
+      "Penggunaan energi sedang. Coba kurangi durasi pemakaian jika memungkinkan 💡";
+
+  }
+
+  else {
+
+    saran =
+      "Penggunaan energi cukup tinggi. Kurangi durasi pemakaian atau gunakan alat hemat energi ⚡";
+
+  }
+
+
+  // TAMPILKAN HASIL
+
+  document.getElementById("hasil").innerHTML = `
+
+    <p>🔌 Alat: <b>${nama}</b></p>
+
+    <p>Perkiraan penggunaan energi:</p>
+
+    <div class="energy">
+      ${energi} Wh/hari
+    </div>
+
+    <p>
+      ≈ ${kwh.toFixed(2)} kWh/hari
+    </p>
+
+    <div class="suggestion">
+      💡 <b>Saran:</b><br>
+      ${saran}
+    </div>
+
+  `;
+
+
+  // SIMPAN RIWAYAT
+
+  const data = {
+
+    nama: nama,
+    daya: daya,
+    lama: lama,
+    jumlah: jumlah,
+    energi: energi,
+    kwh: kwh.toFixed(2),
+    waktu: new Date().toLocaleString("id-ID")
+
+  };
+
+
+  riwayat.unshift(data);
+
+  // Maksimal 10 riwayat
+  riwayat = riwayat.slice(0,10);
+
+  localStorage.setItem(
+    "energyHistory",
+    JSON.stringify(riwayat)
+  );
+
+
+  tampilkanRiwayat();
+
+}
+
+
+// ============================
+// TAMPILKAN RIWAYAT
+// ============================
+
+function tampilkanRiwayat() {
+
+  const history =
+    document.getElementById("history");
+
+
+  if (riwayat.length === 0) {
+
+    history.innerHTML = `
+      <div class="empty">
+        Belum ada riwayat perhitungan.
+      </div>
+    `;
+
+    return;
+  }
+
+
+  history.innerHTML = riwayat.map(item => `
+
+    <div class="history-item">
+
+      <div>
+
+        <div class="history-name">
+          ${item.nama}
+        </div>
+
+        <div class="history-info">
+          ${item.daya} W ×
+          ${item.lama} jam ×
+          ${item.jumlah} kali
+          <br>
+          ${item.waktu}
+        </div>
+
+      </div>
+
+      <div class="history-energy">
+        ${item.energi} Wh
+      </div>
+
+    </div>
+
+  `).join("");
+
+}
+
+
+// ============================
+// HAPUS RIWAYAT
+// ============================
+
+function hapusRiwayat() {
+
+  if (riwayat.length === 0) return;
+
+
+  if (confirm("Hapus semua riwayat?")) {
+
+    riwayat = [];
+
+    localStorage.removeItem("energyHistory");
+
+    tampilkanRiwayat();
+
+  }
+
+}
+
+
+// ============================
+// DARK MODE
+// ============================
+
+function toggleDark() {
+
+  document.body.classList.toggle("dark");
+
+  const dark =
+    document.body.classList.contains("dark");
+
+  localStorage.setItem("darkMode", dark);
+
+  document.getElementById("themeBtn").textContent =
+    dark ? "☀️" : "🌙";
+
+}
+
+
+// ============================
+// LOAD DATA
+// ============================
+
+if (localStorage.getItem("darkMode") === "true") {
+
+  document.body.classList.add("dark");
+
+  document.getElementById("themeBtn").textContent =
+    "☀️";
+
+}
+
+
+tampilkanRiwayat();
+
+</script>
+
+</body>
+  </html>
